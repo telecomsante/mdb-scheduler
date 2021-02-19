@@ -1,0 +1,26 @@
+{
+  "name": "mdb-scheduler",
+  "version": "1.0.0",
+  "description": "Mini agenda-like node scheduler",
+  "main": "index.js",
+  "scripts": {
+    "check": "xo",
+    "fix": "xo --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/telecomsante/mdb-scheduler.git"
+  },
+  "author": "Florian Le Roux <florian.leroux@telecomsante.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/telecomsante/mdb-scheduler/issues"
+  },
+  "homepage": "https://github.com/telecomsante/mdb-scheduler#readme",
+  "devDependencies": {
+    "xo": "^0.37.1"
+  },
+  "xo": {
+    "space": 2
+  }
+}
