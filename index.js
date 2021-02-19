@@ -5,7 +5,7 @@ const flat = o => Object.fromEntries(Object.entries(o)
       .map(([subKey, subValue]) => [`${key}${subKey ? '.' : ''}${subKey}`, subValue])
   ));
 
-module.exports = ({collection, log = () => {}}) => {
+module.exports = ({collection, handleErr: handleError = () => {}}) => {
   let timeoutID;
   const fns = {};
 
@@ -34,11 +34,11 @@ module.exports = ({collection, log = () => {}}) => {
           throw new Error(`Unknown job ${name}`);
         }
 
-        (async () => fn(data))().catch(log);
+        (async () => fn(data))().catch(handleError);
       } catch (error) {
-        log(error);
+        handleError(error);
       } finally {
-        updateTimeout().catch(log);
+        updateTimeout().catch(handleError);
       }
     }, date - Date.now());
   }
