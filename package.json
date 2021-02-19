@@ -1,6 +1,6 @@
 {
   "name": "mdb-scheduler",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Mini agenda-like node scheduler",
   "main": "index.js",
   "scripts": {
@@ -21,9 +21,12 @@
     "xo": "^0.37.1"
   },
   "xo": {
-    "space": 2
+    "space": 2,
+    "rules": {
+      "unicorn/no-array-reduce": "off"
+    }
   },
   "engines": {
-    "node": ">=11.0.0"
+    "node": ">=10.0.0"
   }
 }
