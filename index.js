@@ -7,7 +7,7 @@ module.exports = ({collection, handleErr: handleError = () => {}}) => {
       $group: {_id: {}, date: {$min: '$date'}}
     }]).next();
     if (!dateDoc) {
-      return;
+      return clearTimeout(timeoutID);
     }
 
     const {date} = dateDoc;
