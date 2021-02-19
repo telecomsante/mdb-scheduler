@@ -1,5 +1,7 @@
 
-const flat = o => Object.fromEntries(Object.entries(o)
+const fromEntries = e => e.reduce((a, [key, value]) => ({...a, [key]: value}), {});
+
+const flat = o => fromEntries(Object.entries(o)
   .flatMap(([key, value]) =>
     (value && value.constructor === Object ? Object.entries(value) : [['', value]])
       .map(([subKey, subValue]) => [`${key}${subKey ? '.' : ''}${subKey}`, subValue])
