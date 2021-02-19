@@ -1,11 +1,13 @@
 
-const flat = o => Object.fromEntries(Object.entries(o)
+const fromEntries = e => e.reduce((a, [key, value]) => ({...a, [key]: value}), {});
+
+const flat = o => fromEntries(Object.entries(o)
   .flatMap(([key, value]) =>
     (value && value.constructor === Object ? Object.entries(value) : [['', value]])
       .map(([subKey, subValue]) => [`${key}${subKey ? '.' : ''}${subKey}`, subValue])
   ));
 
-module.exports = ({collection, log = () => {}}) => {
+module.exports = ({collection, handleErr: handleError = () => {}}) => {
   let timeoutID;
   const fns = {};
 
@@ -34,11 +36,11 @@ module.exports = ({collection, log = () => {}}) => {
           throw new Error(`Unknown job ${name}`);
         }
 
-        (async () => fn(data))().catch(log);
+        (async () => fn(data))().catch(handleError);
       } catch (error) {
-        log(error);
+        handleError(error);
       } finally {
-        updateTimeout().catch(log);
+        updateTimeout().catch(handleError);
       }
     }, date - Date.now());
   }
