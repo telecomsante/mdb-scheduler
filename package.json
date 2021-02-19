@@ -21,7 +21,10 @@
     "xo": "^0.37.1"
   },
   "xo": {
-    "space": 2
+    "space": 2,
+    "rules": {
+      "unicorn/no-array-reduce": "off"
+    }
   },
   "engines": {
     "node": ">=11.0.0"

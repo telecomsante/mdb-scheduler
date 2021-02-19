@@ -1,5 +1,5 @@
 
-const fromEntries = e => e.reduce((a, [key, value]) => ({...a, [key]: value}), {});
+const fromEntries = entries => entries.reduce((a, [key, value]) => ({...a, [key]: value}), {});
 
 const flat = o => fromEntries(Object.entries(o)
   .flatMap(([key, value]) =>
