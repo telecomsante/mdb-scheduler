@@ -1,12 +1,3 @@
-
-const fromEntries = entries => entries.reduce((a, [key, value]) => ({...a, [key]: value}), {});
-
-const flat = o => fromEntries(Object.entries(o)
-  .flatMap(([key, value]) =>
-    (value && value.constructor === Object ? Object.entries(value) : [['', value]])
-      .map(([subKey, subValue]) => [`${key}${subKey ? '.' : ''}${subKey}`, subValue])
-  ));
-
 module.exports = ({collection, handleErr: handleError = () => {}}) => {
   let timeoutID;
   const fns = {};
@@ -65,8 +56,8 @@ module.exports = ({collection, handleErr: handleError = () => {}}) => {
       await updateTimeout();
     },
 
-    async delJob({name, dataMatch = {}}) {
-      const {deletedCount} = await collection.deleteMany(flat({data: dataMatch, name}));
+    async delJob(search) {
+      const {deletedCount} = await collection.deleteMany(search);
       await updateTimeout();
       return deletedCount;
     }
