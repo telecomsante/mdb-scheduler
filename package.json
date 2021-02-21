@@ -23,7 +23,11 @@
   "xo": {
     "space": 2,
     "rules": {
-      "unicorn/no-array-reduce": "off"
+      "unicorn/no-array-reduce": "off",
+      "comma-dangle": [
+        "error",
+        "always-multiline"
+      ]
     }
   },
   "engines": {

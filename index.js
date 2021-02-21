@@ -4,7 +4,7 @@ module.exports = ({collection, handleErr: handleError = () => {}}) => {
 
   async function updateTimeout() {
     const dateDoc = await collection.aggregate([{
-      $group: {_id: {}, date: {$min: '$date'}}
+      $group: {_id: {}, date: {$min: '$date'}},
     }]).next();
     if (!dateDoc) {
       return clearTimeout(timeoutID);
@@ -60,6 +60,6 @@ module.exports = ({collection, handleErr: handleError = () => {}}) => {
       const {deletedCount} = await collection.deleteMany(search);
       await updateTimeout();
       return deletedCount;
-    }
+    },
   };
 };
