@@ -1,4 +1,4 @@
-module.exports = ({collection, handleErr: handleError = () => {}}) => {
+module.exports = ({collection, handleError = () => {}}) => {
   let timeoutID;
   const fns = {};
 
