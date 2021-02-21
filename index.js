@@ -1,4 +1,10 @@
-module.exports = ({collection, handleError = console.error}) => {
+module.exports = ({
+  collection,
+  handleError = console.error,
+  setTimeout = global.setTimeout,
+  clearTimeout = global.clearTimeout,
+  Date = global.Date,
+}) => {
   let timeoutID;
   const fns = {};
 
