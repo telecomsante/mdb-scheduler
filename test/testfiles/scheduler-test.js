@@ -308,6 +308,30 @@ test('/scheduler/remove-non-next-job', async t => {
   t.deepEqual(handleErrorMock.getErrors(), []);
 });
 
+test('/scheduler/no-job-found-in-delJob', async t => {
+  const {db, scheduler} = t.context;
+
+  await testStart(t);
+
+  let finished = false;
+  const delJobPromise = scheduler.delJob({})
+    .then(result => {
+      if (!finished) {
+        t.fail('addJob returned before finish');
+      }
+
+      return result;
+    })
+    .catch(error => t.fail(`addJob failed with error: ${error}`));
+
+  t.deepEqual(db.getRequests(), [{type: 'deleteMany', search: {}}]);
+  finished = true;
+  db.respondRequest(0, {deletedCount: 0});
+
+  const deletedCount = await delJobPromise;
+  t.is(deletedCount, 0);
+});
+
 test('/scheduler/do-not-execute-removed-task', async t => {
   const {scheduler, db, tasksDelay, executeNextTask, handleErrorMock, Date} = t.context;
 
