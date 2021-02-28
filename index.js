@@ -64,7 +64,10 @@ module.exports = ({
 
     async delJob(search) {
       const {deletedCount} = await collection.deleteMany(search);
-      await updateTimeout();
+      if (deletedCount > 0) {
+        await updateTimeout();
+      }
+
       return deletedCount;
     },
   };
