@@ -70,5 +70,7 @@ module.exports = ({
 
       return deletedCount;
     },
+
+    findJob: search => collection.find(search).toArray(),
   };
 };

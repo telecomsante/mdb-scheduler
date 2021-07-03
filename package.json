@@ -28,6 +28,7 @@
     "rules": {
       "unicorn/no-array-reduce": "off",
       "promise/prefer-await-to-then": "off",
+      "unicorn/no-array-callback-reference": "off",
       "comma-dangle": [
         "error",
         "always-multiline"
