@@ -1,3 +1,12 @@
+function checkJobDate(job) {
+  const date = new Date(job.date);
+  if (Number.isNaN(date.getTime())) {
+    throw new TypeError('Invalid date');
+  }
+
+  return {...job, date};
+}
+
 module.exports = ({
   collection,
   handleError = console.error,
@@ -7,6 +16,8 @@ module.exports = ({
 }) => {
   let timeoutID;
   const fns = {};
+  const jobsToRecord = [];
+  let addJobScheduled = false;
 
   async function updateTimeout() {
     const dateDoc = await collection.aggregate([{
@@ -42,6 +53,29 @@ module.exports = ({
     }, date - Date.now());
   }
 
+  function pushJob(job) {
+    jobsToRecord.push(job);
+
+    if (!addJobScheduled) {
+      process.nextTick(recordJobs);
+      addJobScheduled = true;
+    }
+  }
+
+  async function recordJobs() {
+    try {
+      addJobScheduled = false;
+      if (jobsToRecord.length === 0) {
+        return;
+      }
+
+      await collection.insertMany(jobsToRecord.splice(0, jobsToRecord.length));
+      await updateTimeout();
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
   return {
     async start() {
       await collection.createIndex({date: 1});
@@ -52,15 +86,8 @@ module.exports = ({
       fns[name] = callback;
     },
 
-    async addJob({date, name, data}) {
-      date = new Date(date);
-      if (Number.isNaN(date.getTime())) {
-        throw new TypeError('Invalid date');
-      }
-
-      await collection.insertOne({date, name, data});
-      await updateTimeout();
-    },
+    addJob: job => pushJob(checkJobDate(job)),
+    addJobs: jobs => jobs.map(checkJobDate).forEach(pushJob),
 
     async delJob(search) {
       const {deletedCount} = await collection.deleteMany(search);
