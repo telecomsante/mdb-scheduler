@@ -33,7 +33,7 @@ module.exports = ({
           throw new Error(`Unknown job ${name}`);
         }
 
-        (async () => fn(data))().catch(handleError);
+        (async () => fn(data, date))().catch(handleError);
       } catch (error) {
         handleError(error);
       } finally {
