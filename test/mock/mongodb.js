@@ -18,6 +18,7 @@ module.exports = () => {
       insertOne: element => addRequest({type: 'insertOne', element}),
       deleteMany: search => addRequest({type: 'deleteMany', search}),
       findOneAndDelete: search => addRequest({type: 'findOneAndDelete', search}),
+      find: search => ({toArray: () => addRequest({type: 'find', search})}),
       aggregate: pipeline => ({next: () => addRequest({type: 'aggregate', pipeline})}),
     }),
 

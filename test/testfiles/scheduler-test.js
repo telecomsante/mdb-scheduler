@@ -497,3 +497,21 @@ test('/scheduler/error-on-search-next-date', async t => {
   t.deepEqual(tasksDelay(), []);
   t.deepEqual(handleErrorMock.getErrors(), [new Error('aggregate error')]);
 });
+
+test('/scheduler/find-job', async t => {
+  const {db, scheduler, Date} = t.context;
+
+  await testStart(t);
+
+  let finished = false;
+  const findJobPromise = scheduler.findJob({'data.uuid': 42})
+    .finally(() => finished || t.fail('findJob returned before finish'))
+    .catch(error => t.fail(`findJob failed with error: ${error}`));
+
+  t.deepEqual(db.getRequests(), [{type: 'find', search: {'data.uuid': 42}}]);
+  db.respondRequest(0, [{data: {uuid: 42}, date: new Date(), name: 'test'}]);
+  finished = true;
+
+  const jobs = await findJobPromise;
+  t.deepEqual(jobs, [{data: {uuid: 42}, date: new Date(), name: 'test'}]);
+});
