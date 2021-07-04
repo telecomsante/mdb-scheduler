@@ -1,3 +1,12 @@
+function checkJobDate(job) {
+  const date = new Date(job.date);
+  if (Number.isNaN(date.getTime())) {
+    throw new TypeError('Invalid date');
+  }
+
+  return {...job, date};
+}
+
 module.exports = ({
   collection,
   handleError = console.error,
@@ -52,13 +61,13 @@ module.exports = ({
       fns[name] = callback;
     },
 
-    async addJob({date, name, data}) {
-      date = new Date(date);
-      if (Number.isNaN(date.getTime())) {
-        throw new TypeError('Invalid date');
-      }
+    async addJob(job) {
+      await collection.insertOne(checkJobDate(job));
+      await updateTimeout();
+    },
 
-      await collection.insertOne({date, name, data});
+    async addJobs(jobs) {
+      await collection.insertMany(jobs.map(checkJobDate));
       await updateTimeout();
     },
 
