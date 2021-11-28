@@ -406,12 +406,12 @@ test('/scheduler/unkown-job-name', async t => {
 
   await executeJob({t, name: 'test', data: 'data'});
   t.deepEqual(tasksDelay(), []);
-  t.deepEqual(handleErrorMock.getErrors(), [new Error('Unknown job test')]);
+  t.deepEqual(handleErrorMock.getErrors(), [new Error('Unknown job "test"')]);
 
   await checkNextJob(t, null);
   t.deepEqual(db.getRequests(), []);
   t.deepEqual(tasksDelay(), []);
-  t.deepEqual(handleErrorMock.getErrors(), [new Error('Unknown job test')]);
+  t.deepEqual(handleErrorMock.getErrors(), [new Error('Unknown job "test"')]);
 });
 
 test('/scheduler/invalid-date', async t => {
