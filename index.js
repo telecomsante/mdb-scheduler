@@ -16,6 +16,7 @@ module.exports = ({
 }) => {
   let timeoutID;
   const fns = {jobs: {}, recurrent: {}};
+  let started = false;
 
   const getJob = name => {
     const fn = fns.jobs[name];
@@ -27,6 +28,10 @@ module.exports = ({
   };
 
   async function updateTimeout() {
+    if (!started) {
+      return;
+    }
+
     const dateDoc = await collection.aggregate([{
       $group: {_id: {}, date: {$min: '$date'}},
     }]).next();
@@ -59,6 +64,7 @@ module.exports = ({
   const scheduler = {
     async start() {
       await collection.createIndex({date: 1});
+      started = true;
       await updateTimeout();
     },
 
