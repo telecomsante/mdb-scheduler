@@ -103,14 +103,12 @@ module.exports = ({
       }
 
       (async () => {
-        const {upsertedId} = await collection.updateOne(
-          {name, recurrent: true},
-          {$setOnInsert: {date, name, recurrent: true}},
+        await collection.updateOne(
+          {date: {$gt: new Date()}, name, recurrent: true},
+          {$set: {date, name, recurrent: true}},
           {upsert: true},
         );
-        if (upsertedId) {
-          await updateTimeout();
-        }
+        await updateTimeout();
       })().catch(handleError);
     },
   };
