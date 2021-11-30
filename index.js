@@ -18,49 +18,6 @@ module.exports = ({
   const fns = {jobs: {}, recurrent: {}};
   let started = false;
 
-  const getJob = name => {
-    const fn = fns.jobs[name];
-    if (!fn) {
-      throw new Error(`Unknown job "${name}"`);
-    }
-
-    return fn;
-  };
-
-  async function updateTimeout() {
-    if (!started) {
-      return;
-    }
-
-    const dateDoc = await collection.aggregate([{
-      $group: {_id: {}, date: {$min: '$date'}},
-    }]).next();
-    if (!dateDoc) {
-      return clearTimeout(timeoutID);
-    }
-
-    const {date} = dateDoc;
-
-    clearTimeout(timeoutID);
-    timeoutID = setTimeout(async () => {
-      try {
-        const {value: job} = await collection.findOneAndDelete({date});
-        if (!job) {
-          return;
-        }
-
-        const {name, data, recurrent} = job;
-        const fn = recurrent ? (fns.recurrent[name] || (() => {})) : getJob(name);
-
-        (async () => fn(data, date))().catch(handleError);
-      } catch (error) {
-        handleError(error);
-      } finally {
-        updateTimeout().catch(handleError);
-      }
-    }, date - Date.now());
-  }
-
   const scheduler = {
     async start() {
       await collection.createIndex({date: 1});
@@ -112,6 +69,49 @@ module.exports = ({
       })().catch(handleError);
     },
   };
+
+  const getJob = name => {
+    const fn = fns.jobs[name];
+    if (!fn) {
+      throw new Error(`Unknown job "${name}"`);
+    }
+
+    return fn;
+  };
+
+  async function updateTimeout() {
+    if (!started) {
+      return;
+    }
+
+    const dateDoc = await collection.aggregate([{
+      $group: {_id: {}, date: {$min: '$date'}},
+    }]).next();
+    if (!dateDoc) {
+      return clearTimeout(timeoutID);
+    }
+
+    const {date} = dateDoc;
+
+    clearTimeout(timeoutID);
+    timeoutID = setTimeout(async () => {
+      try {
+        const {value: job} = await collection.findOneAndDelete({date});
+        if (!job) {
+          return;
+        }
+
+        const {name, data, recurrent} = job;
+        const fn = recurrent ? (fns.recurrent[name] || (() => {})) : getJob(name);
+
+        (async () => fn(data, date))().catch(handleError);
+      } catch (error) {
+        handleError(error);
+      } finally {
+        updateTimeout().catch(handleError);
+      }
+    }, date - Date.now());
+  }
 
   return scheduler;
 };
